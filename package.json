@@ -1,0 +1,28 @@
+{
+  "name": "dialogflowFirebaseFulfillment",
+  "description": "Fulfillment for Surf Spots surf condition forecasts",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "amy skerry-ryan",
+  "engines": {
+    "node": "8"
+  },
+  "scripts": {
+    "start": "firebase serve --only functions:dialogflowFirebaseFulfillment",
+    "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment",
+      "get-spots": "node -e 'require(\"./tools/get-spots.js\").init()'",
+      "prettify": "prettier --print-width 80 --no-semi --single-quote --trailing-comma es5 --write **/*.js *.js"
+  },
+  "dependencies": {
+    "actions-on-google": "^2.2.0",
+    "dialogflow": "^0.6.0",
+    "dialogflow-fulfillment": "^0.5.0",
+    "firebase-admin": "^5.13.1",
+    "firebase-functions": "^2.0.2",
+    "moment": "^2.10.0",
+    "moment-timezone": "^0.5.23",
+    "node-fetch": "^2.0.0",
+    "prettier": "^1.15.3"
+  }
+}
