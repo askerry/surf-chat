@@ -1,6 +1,6 @@
 'use strict'
 
-const { dialogflow, BasicCard, Table } = require('actions-on-google')
+const { dialogflow, Image, Table } = require('actions-on-google')
 
 const fetch = require('node-fetch')
 
@@ -11,334 +11,366 @@ const moment = require('moment')
 // Instantiate the Dialogflow client.
 const app = dialogflow({ debug: true })
 
+const DEFUALT_TZ = -7
+
 const SPOT_MAP = {
-  'Smith River Kellog Road': 652,
-  'Point St George': 653,
-  'Garths Reef': 654,
-  'Whaler Island': 655,
-  'South Beach': 656,
-  'Enderts Beach': 657,
-  'Wilson Creek': 658,
-  'Klamath Rivermouth': 659,
-  'Gold Bluffs Beach': 660,
-  'Freshwater Lagoon': 661,
-  'Patricks Point': 662,
-  'Trinidad State Beach': 663,
-  'Camel Rock': 664,
-  Moonstone: 165,
-  'Little River State Beach': 666,
-  'Mad River Beach': 667,
-  'Samoa Peninsula': 668,
-  Bunkers: 669,
-  'North Jetty': 670,
-  'Harbor Entrance': 671,
-  'South Jetty': 189,
-  'Centerville Beach': 673,
-  'Cape Mendocino': 674,
-  Deadmans: 648,
-  'Third Reef': 676,
-  'No Pass': 677,
-  'DeHaven Creek': 678,
-  'Chadbourne Gulch Blues Beach': 679,
-  'Seaside Creek Beach': 680,
-  'Ward Avenue': 681,
-  'Virgin Creek': 682,
-  'Caspar Creek': 683,
-  'Big Rivermouth': 684,
-  'Navarro Rivermouth': 685,
-  'Manchester State Beach Alder Creek': 686,
-  'Point Arena': 687,
-  'Schooner Gulch Moat Creek': 688,
-  'Gualala Rivermouth': 689,
-  'Black Point Beach': 105,
-  Secrets: 690,
-  'Timber Cove': 691,
-  'The Fort': 692,
-  Mystos: 693,
-  'Russian Rivermouth': 106,
-  'Goat Rock': 694,
-  'Salmon Creek': 107,
-  'Doran Beach': 108,
-  'Dillon Beach': 109,
-  'Point Reyes Beach': 695,
-  'Drakes Estero': 696,
-  'The Patch': 592,
-  Bolinas: 110,
-  'Stinson Beach': 111,
-  'Fort Cronkhite': 112,
-  'Crissy Field': 800,
-  'Fort Point': 113,
-  'Eagles Point': 649,
-  'Ocean Beach - Kellys Cove': 697,
-  'Ocean Beach - VFW': 114,
-  'Ocean Beach - Noriega': 117,
-  'Ocean Beach - Sloat': 801,
-  'Sharp Park': 619,
-  'Rockaway Beach': 119,
-  'Linda Mar': 120,
-  'Pedro Point': 698,
-  Montara: 121,
-  Mavericks: 122,
-  'Princeton Jetty': 123,
-  'Half Moon Bay Beach': 124,
-  'San Gregorio State Beach': 699,
-  'Pomponio State Beach': 126,
-  'Pescadero State Beach': 127,
-  'Pescadero Cove': 700,
-  'Gazos Creek': 701,
-  'Franklin Point': 622,
-  'Ano Nuevo': 118,
-  'County Line': 207,
-  'Waddell Creek': 129,
-  'Waddell Reefs': 600,
-  'Scotts Creek': 128,
-  'Rims Reef': 621,
-  'Davenport Landing': 133,
-  'Laguna Creek': 132,
-  'Four Mile': 131,
-  'Three Mile': 130,
-  'Natural Bridges': 6,
-  'Stockton Avenue': 146,
-  'Swift Street': 145,
-  Getchell: 10,
-  'Mitchells Cove': 144,
-  'Steamer Lane': 2,
-  Cowells: 3,
-  'The Rivermouth': 143,
-  'Santa Cruz Harbor': 142,
-  'Murph Bar': 141,
-  Blacks: 9,
-  'Sunny Cove': 140,
-  'Santa Marias': 8,
-  '26th Avenue': 7,
-  'Little Windansea': 138,
-  Rockview: 137,
-  'Sewer Peak': 5,
-  'Pleasure Point': 1,
-  '38th Avenue': 4,
-  'The Hook': 147,
-  'Sharks Cove': 148,
-  'Capitola Jetties': 149,
-  Manresa: 150,
-  'Sunset Beach': 136,
-  'Zmudowski State Beach': 702,
-  'Moss Landing State Beach': 161,
-  'Salinas River State Beach': 703,
-  'Marina State Beach': 160,
-  'Del Monte Beach': 159,
-  'Lovers Point': 158,
-  'Asilomar State Beach': 156,
-  'Carmel Beach': 154,
-  'Andrew Molera': 153,
-  'Sand Dollar': 152,
-  'Willow Creek': 151,
-  'San Carpoforo Creek': 167,
-  Lighthouse: 704,
-  'Arroyo Laguna': 705,
-  'Pico Creek': 642,
-  'San Simeon Creek': 166,
-  Exotics: 706,
-  'Leffingwell Landing': 707,
-  'Cayucos Pier': 164,
-  'Studio Drive': 599,
-  'Morro Rock': 163,
-  'Hazard Canyon': 708,
-  'Spooners Cove': 709,
-  'Saint Annes': 710,
-  'Pismo Beach Pier': 162,
-  'Santa Maria Rivermouth': 711,
-  'Surf Beach': 712,
-  Jalama: 185,
-  Tajiguas: 713,
-  Refugio: 620,
-  Beavers: 714,
-  'El Capitan': 183,
-  Sands: 182,
-  Devereux: 181,
-  Pescaderos: 715,
-  Depressions: 180,
-  'Campus Point': 179,
-  Poles: 178,
-  'The Pit': 641,
-  Leadbetter: 177,
-  Sandspit: 176,
-  Hammonds: 174,
-  Miramar: 173,
-  'Santa Claus Lane': 171,
-  'Carpinteria Beach': 169,
-  'Tar Pits': 168,
-  Rincon: 198,
-  'La Conchita': 197,
-  'Little Rincon': 196,
-  Hobsons: 195,
-  Faria: 194,
-  Pitas: 640,
-  Mondos: 193,
-  Solimar: 192,
-  'Emma Wood': 191,
-  'Ventura Overhead': 639,
-  'C Street': 190,
-  'San Buenaventura State Beach': 716,
-  'Santa Clara Rivermouth': 188,
-  'McGrath State Beach': 187,
-  'Silver Strand': 717,
-  'Port Hueneme Beach Park': 718,
-  'Ormand Beach': 719,
-  'Point Mugu': 186,
-  'Leo Carrillo': 638,
-  Zero: 720,
-  'Trancas Point': 721,
-  'Zuma Beach': 206,
-  'Point Dume': 637,
-  'Latigo Canyon': 636,
-  Malibu: 205,
-  'Big Rock': 759,
-  Topanga: 388,
-  'Chart House': 635,
-  Sunset: 387,
-  'Santa Monica Jetties': 723,
-  'Santa Monica Municipal Pier': 724,
-  'Bay Street': 725,
-  'Rose Avenue': 726,
-  Venice: 204,
-  'Toes Overs': 727,
-  'Ballona Creek': 728,
-  'D and W': 729,
-  'New Jetty': 730,
-  'El Porto': 402,
-  'Manhattan Beach': 203,
-  Hermosa: 202,
-  'Redondo Breakwater': 201,
-  'Sapphire Street': 731,
-  'Topaz Street': 732,
-  'Torrance Beach': 200,
-  'Rat Shit': 733,
-  Haggertys: 396,
-  'Palos Verdes Cove': 633,
-  Indicator: 734,
-  'Lunada Bay': 199,
-  'Abalone Cove Beach': 735,
-  'Royal Palms State Beach': 736,
-  'Cabrillo Beach': 632,
-  '64th Place': 737,
-  '72nd Place': 738,
-  'San Gabriel Rivermouth': 739,
-  '7th Street': 740,
-  'Seal Beach Pier': 222,
-  '13th Street': 601,
-  'Dolphin Avenue': 741,
-  'Surfside Jetty': 602,
-  'Anderson St': 603,
-  'Bolsa Chica': 604,
-  Goldenwest: 220,
-  '17th Street': 605,
-  'Huntington Pier': 221,
-  'Huntington Beach': 643,
-  'Santa Ana River Jetties': 606,
-  '56th Street': 219,
-  '40th Street': 607,
-  '36th Street': 608,
-  Blackies: 651,
-  'Newport Pier': 609,
-  'Newport Point': 218,
-  'The Wedge': 217,
-  'Corona Del Mar': 216,
-  'Morro Beach': 742,
-  Rockpile: 760,
-  Thalia: 611,
-  'Brooks Street': 215,
-  Agate: 743,
-  'Salt Creek': 214,
-  Doheny: 213,
-  Poche: 744,
+  'smith river kellog road': 652,
+  'point st george': 653,
+  'garths reef': 654,
+  'whaler island': 655,
+  'south beach': 656,
+  'enderts beach': 657,
+  'wilson creek': 658,
+  'klamath rivermouth': 659,
+  'gold bluffs beach': 660,
+  'freshwater lagoon': 661,
+  'patricks point': 662,
+  'trinidad state beach': 663,
+  'camel rock': 664,
+  moonstone: 165,
+  'little river state beach': 666,
+  'mad river beach': 667,
+  'samoa peninsula': 668,
+  bunkers: 669,
+  'north jetty': 670,
+  'harbor entrance': 671,
+  'south jetty': 189,
+  'centerville beach': 673,
+  'cape mendocino': 674,
+  deadmans: 648,
+  'third reef': 676,
+  'no pass': 677,
+  'dehaven creek': 678,
+  'chadbourne gulch blues beach': 679,
+  'seaside creek beach': 680,
+  'ward avenue': 681,
+  'virgin creek': 682,
+  'caspar creek': 683,
+  'big rivermouth': 684,
+  'navarro rivermouth': 685,
+  'manchester state beach alder creek': 686,
+  'point arena': 687,
+  'schooner gulch moat creek': 688,
+  'gualala rivermouth': 689,
+  'black point beach': 105,
+  secrets: 690,
+  'timber cove': 691,
+  'the fort': 692,
+  mystos: 693,
+  'russian rivermouth': 106,
+  'goat rock': 694,
+  'salmon creek': 107,
+  'doran beach': 108,
+  'dillon beach': 109,
+  'point reyes beach': 695,
+  'drakes estero': 696,
+  'the patch': 592,
+  bolinas: 110,
+  'stinson beach': 111,
+  'fort cronkhite': 112,
+  'crissy field': 800,
+  'fort point': 113,
+  'eagles point': 649,
+  'ocean beach - kellys cove': 697,
+  'ocean beach - vfw': 114,
+  'ocean beach - noriega': 117,
+  'ocean beach - sloat': 801,
+  'sharp park': 619,
+  'rockaway beach': 119,
+  'linda mar': 120,
+  'pedro point': 698,
+  montara: 121,
+  mavericks: 122,
+  'princeton jetty': 123,
+  'half moon bay beach': 124,
+  'san gregorio state beach': 699,
+  'pomponio state beach': 126,
+  'pescadero state beach': 127,
+  'pescadero cove': 700,
+  'gazos creek': 701,
+  'franklin point': 622,
+  'ano nuevo': 118,
+  'county line': 207,
+  'waddell creek': 129,
+  'waddell reefs': 600,
+  'scotts creek': 128,
+  'rims reef': 621,
+  'davenport landing': 133,
+  'laguna creek': 132,
+  'four mile': 131,
+  'three mile': 130,
+  'natural bridges': 6,
+  'stockton avenue': 146,
+  'swift street': 145,
+  getchell: 10,
+  'mitchells cove': 144,
+  'steamer lane': 2,
+  cowells: 3,
+  'the rivermouth': 143,
+  'santa cruz harbor': 142,
+  'murph bar': 141,
+  blacks: 9,
+  'sunny cove': 140,
+  'santa marias': 8,
+  '26th avenue': 7,
+  'little windansea': 138,
+  rockview: 137,
+  'sewer peak': 5,
+  'pleasure point': 1,
+  '38th avenue': 4,
+  'the hook': 147,
+  'sharks cove': 148,
+  'capitola jetties': 149,
+  manresa: 150,
+  'sunset beach': 136,
+  'zmudowski state beach': 702,
+  'moss landing state beach': 161,
+  'salinas river state beach': 703,
+  'marina state beach': 160,
+  'del monte beach': 159,
+  'lovers point': 158,
+  'asilomar state beach': 156,
+  'carmel beach': 154,
+  'andrew molera': 153,
+  'sand dollar': 152,
+  'willow creek': 151,
+  'san carpoforo creek': 167,
+  lighthouse: 704,
+  'arroyo laguna': 705,
+  'pico creek': 642,
+  'san simeon creek': 166,
+  exotics: 706,
+  'leffingwell landing': 707,
+  'cayucos pier': 164,
+  'studio drive': 599,
+  'morro rock': 163,
+  'hazard canyon': 708,
+  'spooners cove': 709,
+  'saint annes': 710,
+  'pismo beach pier': 162,
+  'santa maria rivermouth': 711,
+  'surf beach': 712,
+  jalama: 185,
+  tajiguas: 713,
+  refugio: 620,
+  beavers: 714,
+  'el capitan': 183,
+  sands: 182,
+  devereux: 181,
+  pescaderos: 715,
+  depressions: 180,
+  'campus point': 179,
+  poles: 178,
+  'the pit': 641,
+  leadbetter: 177,
+  sandspit: 176,
+  hammonds: 174,
+  miramar: 173,
+  'santa claus lane': 171,
+  'carpinteria beach': 169,
+  'tar pits': 168,
+  rincon: 198,
+  'la conchita': 197,
+  'little rincon': 196,
+  hobsons: 195,
+  faria: 194,
+  pitas: 640,
+  mondos: 193,
+  solimar: 192,
+  'emma wood': 191,
+  'ventura overhead': 639,
+  'c street': 190,
+  'san buenaventura state beach': 716,
+  'santa clara rivermouth': 188,
+  'mcgrath state beach': 187,
+  'silver strand': 717,
+  'port hueneme beach park': 718,
+  'ormand beach': 719,
+  'point mugu': 186,
+  'leo carrillo': 638,
+  zero: 720,
+  'trancas point': 721,
+  'zuma beach': 206,
+  'point dume': 637,
+  'latigo canyon': 636,
+  malibu: 205,
+  'big rock': 759,
+  topanga: 388,
+  'chart house': 635,
+  sunset: 387,
+  'santa monica jetties': 723,
+  'santa monica municipal pier': 724,
+  'bay street': 725,
+  'rose avenue': 726,
+  venice: 204,
+  'toes overs': 727,
+  'ballona creek': 728,
+  'd and w': 729,
+  'new jetty': 730,
+  'el porto': 402,
+  'manhattan beach': 203,
+  hermosa: 202,
+  'redondo breakwater': 201,
+  'sapphire street': 731,
+  'topaz street': 732,
+  'torrance beach': 200,
+  'rat shit': 733,
+  haggertys: 396,
+  'palos verdes cove': 633,
+  indicator: 734,
+  'lunada bay': 199,
+  'abalone cove beach': 735,
+  'royal palms state beach': 736,
+  'cabrillo beach': 632,
+  '64th place': 737,
+  '72nd place': 738,
+  'san gabriel rivermouth': 739,
+  '7th street': 740,
+  'seal beach pier': 222,
+  '13th street': 601,
+  'dolphin avenue': 741,
+  'surfside jetty': 602,
+  'anderson st': 603,
+  'bolsa chica': 604,
+  goldenwest: 220,
+  '17th street': 605,
+  'huntington pier': 221,
+  'huntington beach': 643,
+  'santa ana river jetties': 606,
+  '56th street': 219,
+  '40th street': 607,
+  '36th street': 608,
+  blackies: 651,
+  'newport pier': 609,
+  'newport point': 218,
+  'the wedge': 217,
+  'corona del mar': 216,
+  'morro beach': 742,
+  rockpile: 760,
+  thalia: 611,
+  'brooks street': 215,
+  agate: 743,
+  'salt creek': 214,
+  doheny: 213,
+  poche: 744,
   '204s': 745,
-  'San Clemente Pier': 212,
-  'T Street': 211,
-  Lasuen: 391,
-  Riviera: 644,
-  Calafia: 645,
-  'State Beach': 392,
-  'North Gate': 210,
-  'Cottons Point': 209,
-  'Upper Trestles': 623,
-  'Lower Trestles': 208,
-  Church: 625,
-  'San Onofre': 239,
-  Trails: 614,
-  'Oceanside Harbor': 238,
-  'Oceanside Pier': 594,
-  Wisconsin: 628,
-  Cassidy: 629,
-  Tamarack: 237,
-  'Warm Water Jetty': 596,
-  'Terra Mar': 597,
-  Campground: 630,
-  Ponto: 236,
-  Grandview: 400,
-  Beacons: 235,
-  'Stone Steps': 746,
-  'Moonlight Beach': 747,
-  'D Street': 401,
-  Swamis: 234,
-  Pipes: 233,
-  'Cardiff Reef': 232,
-  Sandbox: 748,
-  Georges: 749,
-  'Seaside Reef': 231,
-  Pillbox: 750,
-  'Del Mar Rivermouth': 751,
-  'Del Mar Beach': 752,
-  '15th Street - Del Mar': 230,
-  'South Del Mar': 753,
-  'Torrey Pines State Beach': 754,
-  'Blacks Beach': 229,
-  'Scripps Pier': 228,
-  'La Jolla Cove': 755,
-  Horseshoe: 756,
-  'Little Point': 757,
-  'Simmons Reef': 758,
-  Windansea: 227,
-  'Bird Rock': 398,
-  Tourmaline: 399,
-  'Pacific Beach': 226,
-  'Mission Beach': 397,
-  'Dog Beach': 761,
-  'Ocean Beach Jetty': 762,
-  'Ocean Beach Pier': 225,
-  'Sunset Cliffs': 224,
-  Coronado: 598,
-  'Imperial Beach': 223,
+  'san clemente pier': 212,
+  't street': 211,
+  lasuen: 391,
+  riviera: 644,
+  calafia: 645,
+  'state beach': 392,
+  'north gate': 210,
+  'cottons point': 209,
+  'upper trestles': 623,
+  'lower trestles': 208,
+  church: 625,
+  'san onofre': 239,
+  trails: 614,
+  'oceanside harbor': 238,
+  'oceanside pier': 594,
+  wisconsin: 628,
+  cassidy: 629,
+  tamarack: 237,
+  'warm water jetty': 596,
+  'terra mar': 597,
+  campground: 630,
+  ponto: 236,
+  grandview: 400,
+  beacons: 235,
+  'stone steps': 746,
+  'moonlight beach': 747,
+  'd street': 401,
+  swamis: 234,
+  pipes: 233,
+  'cardiff reef': 232,
+  sandbox: 748,
+  georges: 749,
+  'seaside reef': 231,
+  pillbox: 750,
+  'del mar rivermouth': 751,
+  'del mar beach': 752,
+  '15th street - del mar': 230,
+  'south del mar': 753,
+  'torrey pines state beach': 754,
+  'blacks beach': 229,
+  'scripps pier': 228,
+  'la jolla cove': 755,
+  horseshoe: 756,
+  'little point': 757,
+  'simmons reef': 758,
+  windansea: 227,
+  'bird rock': 398,
+  tourmaline: 399,
+  'pacific beach': 226,
+  'mission beach': 397,
+  'dog beach': 761,
+  'ocean beach jetty': 762,
+  'ocean beach pier': 225,
+  'sunset cliffs': 224,
+  coronado: 598,
+  'imperial beach': 223,
 }
 
-function findSpotId(locationQuery) {
+function findSpotId(conv, locationQuery) {
   console.log(locationQuery)
-  console.log(SPOT_MAP[locationQuery])
   let spotId = SPOT_MAP[locationQuery]
+  if (!spotId) {
+    conv.add('I could not find any surf spot for ' + locationQuery)
+    return
+  }
   return spotId
 }
 
-function getSpotInfo(conv, spotId, date, hrStrs) {
+function fetchSpotInfo(conv, spotId, date) {
   const url = `http://api.spitcast.com/api/spot/forecast/${spotId}?dval=${date}`
   console.log(`Making request to ${url}`)
   return fetch(url)
     .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      console.log(hrStrs)
-      const matches = hrStrs.map(hrStr => {
-        return data.filter(d => d.hour == hrStr)[0]
-      })
-      return constructInfoResponse(conv, matches)
-    })
     .catch(error => {
-      return apiErrorResponse(conv, error)
+      console.error(error)
+      conv.add(
+        'We had a problem connecting to the spitcast API. Please try again later.'
+      )
     })
 }
 
+function getImage(result) {
+  // TODO: get image from the Google Places API
+  const image = new Image({
+    url:
+      'https://www.citymb.info/Home/ShowPublishedImage/24205/636716545817630000',
+    alt: result.spot_name,
+  })
+  return image
+}
+
+function getSpotInfo(conv, spotId, date, hrStrs) {
+  const url = `http://api.spitcast.com/api/spot/forecast/${spotId}?dval=${date}`
+  return fetchSpotInfo(conv, spotId, date).then(data => {
+    console.log(hrStrs)
+    const matches = hrStrs.map(hrStr => {
+      return data.filter(d => d.hour == hrStr)[0]
+    })
+    return constructInfoResponse(conv, matches, getImage(matches[0]))
+  })
+}
+
+function _constructHourSet(t, numHrs = 4) {
+  const hrStrs = []
+  for (let i = 0; i <= numHrs; i++) {
+    hrStrs.push(t.format('hA'))
+    t.add(1, 'hours')
+  }
+  return hrStrs
+}
+
 function parseParams(params) {
-  console.log(params)
+  // Parse possible location parameters
   let locationQuery
-  if (params.location) {
+  if (params.surf_spot) {
+    locationQuery = params['surf_spot']
+  } else if (params.location) {
     locationQuery =
       params.location.city ||
       params.location['street-address'] ||
@@ -346,41 +378,63 @@ function parseParams(params) {
   } else {
     locationQuery = params['geo-city']
   }
-  const now = moment()
-  let d
-  let t
-  if (params.date & params.time) {
-    d = moment(params.date)
-    t = moment(params.time)
-  } else if (params.time) {
-    t = moment(params.time)
-    d = now
-  } else if (params.date) {
-    d = moment(params.date)
-    if (d.date() == now.date()) {
-      t = now
-    } else {
-      t = moment(params.date)
-    }
-  } else {
-    d = now
-    t = now
+  locationQuery = locationQuery.toLocaleLowerCase()
+  if (locationQuery.endsWith('?')) {
+    locationQuery.slice(0, -1)
   }
-  const dateStr = `${d.year()}${d.month() + 1}${d.date()}`
-  const hrs = [t.hour(), t.hour() + 1, t.hour() + 2, t.hour() + 3]
-  const hrStrs = hrs.map(hr => (hr > 12 ? `${hr - 12}PM` : `${hr}AM`))
+  // Parse possible date/time parameters
+  const now = moment().add(DEFUALT_TZ, 'hours')
+  const date = params.date ? moment(params.date).parseZone() : now
+  let time
+  if (params.time) {
+    time = moment(params.time).parseZone()
+  } else if (params.date && date.date() !== now.date()) {
+    // If we are looking at a date other than today, and no time was provided,
+    // default to 6AM.
+    time = moment(params.date)
+      .startOf('day')
+      .add(6, 'hours')
+  } else {
+    time = now
+  }
+  const dateStr = `${date.year()}${date.month() + 1}${date.date()}`
+  const hrStrs = _constructHourSet(time)
   return { locationQuery, dateStr, hrStrs }
 }
 
-function constructInfoResponse(conv, results) {
+function _fmtQuality(rawQuality) {
+  let quality
+  switch (rawQuality) {
+    case 'Poor':
+      quality = '★☆☆☆'
+      break
+    case 'Poor-Fair':
+      quality = '★★☆☆'
+      break
+    case 'Fair':
+      quality = '★★★☆'
+      break
+    case 'Fair-Good':
+      quality = '★★★★'
+      break
+    case 'Good':
+      quality = '🌟🌟🌟🌟'
+      break
+    default:
+      quality = rawQuality
+  }
+  return quality
+}
+
+function constructInfoResponse(conv, results, image) {
   const result = results[0]
-  const rows = results.map(row => {
+  const hrRows = results.map(row => {
     const ft = Math.round(row.size_ft * 100) / 100 + 'ft'
     return [
       row.hour,
-      row.shape_detail.swell,
-      row.shape_detail.tide,
-      row.shape_detail.wind,
+      _fmtQuality(row.shape_detail.swell),
+      _fmtQuality(row.shape_detail.tide),
+      _fmtQuality(row.shape_detail.wind),
       ft,
     ]
   })
@@ -389,15 +443,11 @@ function constructInfoResponse(conv, results) {
     subtitle: `Surf forecast for ${result.date}.`,
     dividers: true,
     columns: ['time', 'swell', 'tide', 'wind', 'size'],
-    rows,
+    image,
+    rows: hrRows,
   })
   conv.add(`Here's your surf report!`, table)
   return
-}
-
-function apiErrorResponse(conv, error) {
-  console.error(error)
-  conv.add('We had a problem connecting to spitcast. Please try again later.')
 }
 
 function surfForecastIntent(conv, params) {
@@ -406,17 +456,16 @@ function surfForecastIntent(conv, params) {
     conv.add("I didn't catch that. Where do you want to go?")
   }
   conv.add(`Checking the surf conditions for ${locationQuery} ...`)
-  const spotId = findSpotId(locationQuery)
-  if (!spotId) {
-    conv.add('I could not find any surf spot for ' + locationQuery)
+  const spotId = findSpotId(conv, locationQuery)
+  if (spotId) {
+    conv.data.spotId = spotId
+    return getSpotInfo(conv, spotId, dateStr, hrStrs)
+  } else {
     return Promise.resolve()
   }
-  return getSpotInfo(conv, spotId, dateStr, hrStrs)
 }
 
-app.intent('surf_forecast', intentWrapper)
-
-function intentWrapper(conv, params) {
+function intentHandler(conv, params) {
   return surfForecastIntent(conv, params)
     .then(function(result) {
       return Promise.resolve()
@@ -427,6 +476,8 @@ function intentWrapper(conv, params) {
       return Promise.resolve()
     })
 }
+
+app.intent('surf_forecast', intentHandler)
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app)
